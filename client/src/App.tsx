@@ -33,12 +33,14 @@ export class App extends React.PureComponent<{}, AppState> {
 			{filteredTickets.map((ticket) => (<li key={ticket.id} className='ticket'>
 				<h3 className='title'>{ticket.title}</h3>
 				<h5> {ticket.content}</h5>
-				<h5> {ticket.labels}</h5>
 				<footer>
 					<div className='meta-data'>By {ticket.userEmail} | { new Date(ticket.creationTime).toLocaleString()}</div>
+					<div className={"label"}>
 					{ticket.labels && ticket.labels.map((label)=>(
-						<button > {label}</button>
+						 <button > {label}</button>
+
 					))}
+					</div>
 				</footer>
 			</li>))}
 		</ul>);
