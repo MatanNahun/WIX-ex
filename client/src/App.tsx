@@ -4,7 +4,8 @@ import {createApiClient, Ticket} from './api';
 
 export type AppState = {
 	tickets?: Ticket[],
-	search: string;
+	search: string,
+	ticketsToDisplay?: Ticket[];
 }
 
 const api = createApiClient();
@@ -12,25 +13,39 @@ const api = createApiClient();
 export class App extends React.PureComponent<{}, AppState> {
 
 	state: AppState = {
-		search: ''
+		search: '',
+
 	}
 
 	searchDebounce: any = null;
 
 	async componentDidMount() {
 		this.setState({
-			tickets: await api.getTickets()
+			tickets: await api.getTickets(),
+			ticketsToDisplay: await api.getTickets()
 		});
 	}
+	hideFunction = (id:string)=> {
+		this.setState((state)=>({
+			ticketsToDisplay:state.ticketsToDisplay && state.ticketsToDisplay.filter((ticket)=>(ticket.id !== id))
+		}))
+	}
+	restoreTickets=()=>{
+		this.setState((state)=>({
+			ticketsToDisplay: state.tickets
+		}))
+	}
+
 
 	renderTickets = (tickets: Ticket[]) => {
 
 		const filteredTickets = tickets
-			.filter((t) => (t.title.toLowerCase() + t.content.toLowerCase()).includes(this.state.search.toLowerCase()));
+		.filter((t) => (t.title.toLowerCase() + t.content.toLowerCase()).includes(this.state.search.toLowerCase()));
 
 
-		return (<ul className='tickets'>
-			{filteredTickets.map((ticket) => (<li key={ticket.id} className='ticket'>
+		return  (<ul className='tickets'>
+			{filteredTickets.map((ticket) => (
+				<li key={ticket.id} className='ticket'>
 				<h3 className='title'>{ticket.title}</h3>
 				<h5> {ticket.content}</h5>
 				<footer>
@@ -38,9 +53,9 @@ export class App extends React.PureComponent<{}, AppState> {
 					<div className={"label"}>
 					{ticket.labels && ticket.labels.map((label)=>(
 						 <button > {label}</button>
-
 					))}
 					</div>
+					<button className={"HideButton"} onClick={()=>{this.hideFunction(ticket.id)}} > Hide </button>
 				</footer>
 			</li>))}
 		</ul>);
@@ -58,17 +73,36 @@ export class App extends React.PureComponent<{}, AppState> {
 	}
 
 	render() {	
-		const {tickets} = this.state;
+		const {tickets,ticketsToDisplay} = this.state;
 
 		return (<main>
 			<h1>Tickets List</h1>
 			<header>
 				<input type="search" placeholder="Search..." onChange={(e) => this.onSearch(e.target.value)}/>
 			</header>
-			{tickets ? <div className='results'>Showing {tickets.length} results</div> : null }	
-			{tickets ? this.renderTickets(tickets) : <h2>Loading..</h2>}
+			{
+				tickets && ticketsToDisplay &&
+					<div>
+						<p> {tickets.length-ticketsToDisplay.length}</p>
+						<button onClick={()=>{this.restoreTickets()}}>restore</button>
+					</div>
+
+			}
+
+			{ticketsToDisplay ? <div className='results'>Showing {ticketsToDisplay.length} results</div> : null }
+			{ticketsToDisplay ? this.renderTickets(ticketsToDisplay) : <h2>Loading..</h2>}
 		</main>)
 	}
 }
+// type Student={
+// 	name:string,
+// 	age:number
+// }
+// const s:Student={
+// 	name:'sdgdsf',
+// 	age:'sdg'
+// }
+
+
 
 export default App;
