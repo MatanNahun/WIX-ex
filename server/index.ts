@@ -7,7 +7,7 @@ console.log('starting server', { serverAPIPort, APIPath });
 
 const app = express();
 
-const PAGE_SIZE = 20;
+const PAGE_SIZE = 200;
 
 app.use(bodyParser.json());
 
@@ -25,7 +25,7 @@ app.get(APIPath, (req, res) => {
 
   const paginatedData = tempData.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
-  res.send(paginatedData);
+  res.send(tempData);
 });
 
 app.listen(serverAPIPort);

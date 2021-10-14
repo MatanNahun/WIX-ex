@@ -11,6 +11,36 @@ body {
 		margin: 0 auto;
 	}
 
+	.scroll{
+		position: fixed;
+		z-index: 100;
+		right: 30px;
+		bottom: 100px;
+		color: #3899ec;
+
+
+	}
+
+	.searchBar{
+		display: flex;
+		flex-wrap: wrap;
+		flex-direction: row;
+
+		p {
+			font-size:12px;
+		}
+
+
+	}
+
+	.restoreButton{
+		color: blue;
+		cursor: pointer;
+		text-underline: blue;
+
+	}
+
+
 	h1 {
 		font-weight: 300;
 	}
@@ -19,6 +49,7 @@ body {
 		color: #7a92a5;
 		font-size: 12px;
 		margin: 12px 5px;
+		display: inline;
 	}
 
 	header {
@@ -77,9 +108,14 @@ body {
 			padding: 10px 20px;
 			transition: box-shadow .2s ease-in-out;
 			position: relative;
+			word-wrap: break-word;
 
 			&:hover {
 				box-shadow: 0 2px 6px 1px #d3d7da;
+
+				.HideButton{
+					color: darkblue;
+				}
 			}
 
 			.title {
@@ -113,6 +149,33 @@ body {
 				font-size: 12px;
 				border: 8px solid;
 			}
+			.HideButton{
+				color: transparent;
+				cursor: pointer;
+				position: absolute;
+				font-size: 14px;
+				top: 5%;
+				left: 90%;
+			}
+			.ticketContent{
+				text-overflow: clip;
+				margin-bottom: 5px;
+			}
+			.seeButton{
+				color: darkblue;
+				cursor: pointer;
+				margin-top: 0;
+				margin-bottom: 0;
+			}
+			.seeButton:hover {
+				text-underline: darkblue;
+				text-decoration: underline;
+			}
+
+
+
+
+
 
 		}
 	}
