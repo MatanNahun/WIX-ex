@@ -4,22 +4,23 @@ import {Ticket} from "./api";
 const TicketComponent:FunctionComponent<{ ticket: Ticket, hide: Function}> = ({ ticket, hide }) => {
     const [showMore, setShowMore] = useState(false);
 
-    const lines = ticket.content.split("\n");
-    const linesCount = lines.length;
+    // const lines = ticket.content.split("\n");
+    const chars = ticket.content.length
+    // const linesCount = lines.length;
     const getContent = () => {
-        if (linesCount <= 3) {
+        if (chars <= 400) {
             return ticket.content;
         }
         if (showMore) {
             return ticket.content
         }
-        return lines.slice(0,3).join("\n");
+        return ticket.content.slice(0,400) + "...";
     }
 
     return (<li key={ticket.id} className='ticket'>
         <h3 className='title'>{ticket.title}</h3>
         <p className={"ticketContent"}>{getContent()}</p>
-        {(linesCount > 3) && <p className={"seeButton"}  onClick={() => setShowMore(!showMore)}>{showMore ? "show less" : "show more"}</p>}
+        {(chars > 400) && <p className={"seeButton"}  onClick={() => setShowMore(!showMore)}>{showMore ? "show less" : "show more"}</p>}
         {/*<p className={"readMore"} onClick={()=>{this.readMore(this)}} > show more </p>*/}
         <footer>
             <div className='meta-data'>By {ticket.userEmail} | { new Date(ticket.creationTime).toLocaleString()}</div>

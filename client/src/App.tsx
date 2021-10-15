@@ -8,6 +8,7 @@ export type AppState = {
     tickets?: Ticket[],
     search: string,
     ticketsToDisplay?: Ticket[];
+    page: number;
 }
 
 const api = createApiClient();
@@ -15,16 +16,19 @@ const api = createApiClient();
 export class App extends React.PureComponent<{}, AppState> {
 
     state: AppState = {
-        search: '',
+        search: '', page:1
 
     }
 
     searchDebounce: any = null;
 
     async componentDidMount() {
+        const {search, page} = this.state;
         this.setState({
-            tickets: await api.getTickets(),
-            ticketsToDisplay: await api.getTickets()
+            tickets: await api.getTickets(page, search),
+        });
+        this.setState({
+            ticketsToDisplay: this.state.tickets
         });
     }
 
@@ -64,6 +68,7 @@ export class App extends React.PureComponent<{}, AppState> {
     }
 
     onSearch = async (val: string, newPage?: number) => {
+    console.log(val)
 
         clearTimeout(this.searchDebounce);
 
@@ -72,16 +77,36 @@ export class App extends React.PureComponent<{}, AppState> {
                 search: val
             });
         }, 300);
+        if (!val){
+           return await this.onClear()
+        }
+        this.setState({
+            tickets: await api.getTickets(this.state.page, this.state.search),
+        });
+        this.setState({
+            ticketsToDisplay: this.state.tickets
+        });
+    }
+
+    onClear = async () => {
+        this.setState({
+            tickets: await api.getTickets(1, ""),
+        });
+        this.setState({
+            ticketsToDisplay: this.state.tickets
+        });
     }
 
     render() {
         const {tickets, ticketsToDisplay} = this.state;
         const hiddenCount = (tickets || []).length - (ticketsToDisplay || []).length;
 
+
+
         return (<main>
             <h1>Tickets List</h1>
             <header>
-                <input type="search" placeholder="Search..." onChange={(e) => this.onSearch(e.target.value)}/>
+                <input type="search" placeholder="Search..." onChange={(e) => this.onSearch(e.target.value)} />
             </header>
             <div className={"searchBar"}>
                 {

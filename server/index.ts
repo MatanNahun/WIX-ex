@@ -7,7 +7,7 @@ console.log('starting server', { serverAPIPort, APIPath });
 
 const app = express();
 
-const PAGE_SIZE = 200;
+const PAGE_SIZE = 20;
 
 app.use(bodyParser.json());
 
@@ -23,9 +23,21 @@ app.get(APIPath, (req, res) => {
   // @ts-ignore
   const page: number = req.query.page || 1;
 
-  const paginatedData = tempData.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  const search: string = req.query.search || "";
 
-  res.send(tempData);
+  let data;
+
+  if (search) {
+    data = tempData.filter((element) => {
+      return element.title.includes(search) || element.content.includes(search)
+    })
+  } else {
+    data = tempData;
+  }
+
+  const paginatedData = data.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+
+  res.send(paginatedData);
 });
 
 app.listen(serverAPIPort);
