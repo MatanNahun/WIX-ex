@@ -90,6 +90,22 @@ body {
 		font-size: 12px;
 	}
 
+	.buttons {
+		display: flex;
+
+		button {
+			background-color: #3899ec;
+			color: white;
+			padding: 8px 16px;
+			text-align: center;
+			text-decoration: none;
+			display: inline-block;
+			font-size: 12px;
+			border: 8px solid;
+			cursor: pointer;
+		}
+	}
+
 	.tickets {
 
 		margin: 0;
@@ -157,11 +173,12 @@ body {
 				top: 5%;
 				left: 90%;
 			}
-			.ticketContent{
+			.ticketContent {
 				text-overflow: clip;
 				margin-bottom: 5px;
+				cursor: pointer;
 			}
-			.seeButton{
+			.seeButton {
 				color: darkblue;
 				cursor: pointer;
 				margin-top: 0;

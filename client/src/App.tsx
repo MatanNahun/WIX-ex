@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 import './App.scss';
 import {createApiClient, Ticket} from './api';
 import ScrollUpButton from "./ScrollUp";
@@ -16,8 +16,8 @@ const api = createApiClient();
 export class App extends React.PureComponent<{}, AppState> {
 
     state: AppState = {
-        search: '', page:1
-
+        search: '',
+        page: 1
     }
 
     searchDebounce: any = null;
@@ -37,23 +37,12 @@ export class App extends React.PureComponent<{}, AppState> {
             ticketsToDisplay: state.ticketsToDisplay && state.ticketsToDisplay.filter((ticket) => (ticket.id !== id))
         }))
     }
-    // // readMore = ()=> {
-    // // 	const [isTruncated, setIsTruncated] = useState(true)
-    // // 	const resultString = isTruncated ? ticket.content.slice(0,100) : tickets.content;
-    //
-    //
-    //
-    //
-    //
-    //
-    // }
 
     restoreTickets = () => {
         this.setState((state) => ({
             ticketsToDisplay: state.tickets
         }))
     }
-
 
     renderTickets = (tickets: Ticket[]) => {
 
@@ -68,8 +57,6 @@ export class App extends React.PureComponent<{}, AppState> {
     }
 
     onSearch = async (val: string, newPage?: number) => {
-    console.log(val)
-
         clearTimeout(this.searchDebounce);
 
         this.searchDebounce = setTimeout(async () => {
@@ -78,7 +65,7 @@ export class App extends React.PureComponent<{}, AppState> {
             });
         }, 300);
         if (!val){
-           return await this.onClear()
+           return await  this.onClear()
         }
         this.setState({
             tickets: await api.getTickets(this.state.page, this.state.search),
@@ -97,11 +84,38 @@ export class App extends React.PureComponent<{}, AppState> {
         });
     }
 
+    updatePageNumber = (pageNumber: number) => {
+        this.setState({page: pageNumber});
+    }
+
+    onNextButtonClick = async () => {
+        const pageNumber = this.state.page + 1
+        this.updatePageNumber(pageNumber);
+
+        this.setState({tickets: await api.getTickets(pageNumber, "")});
+        this.setState({ticketsToDisplay: this.state.tickets});
+    }
+
+    onPreviousButtonClick = async () => {
+        const pageNumber = this.state.page - 1
+        this.updatePageNumber(pageNumber);
+
+        this.setState({tickets: await api.getTickets(pageNumber, "")});
+        this.setState({ticketsToDisplay: this.state.tickets});
+    }
+
+    renderNextPreviousButtons = () => {
+        return (
+            <div className={"buttons"}>
+                {this.state.page !== 1 ? <button className={"button"} onClick={this.onPreviousButtonClick}>Previous</button> : null}
+                <button className={"button"} onClick={this.onNextButtonClick}>Next</button>
+            </div>
+        )
+    }
+
     render() {
         const {tickets, ticketsToDisplay} = this.state;
         const hiddenCount = (tickets || []).length - (ticketsToDisplay || []).length;
-
-
 
         return (<main>
             <h1>Tickets List</h1>
@@ -124,32 +138,18 @@ export class App extends React.PureComponent<{}, AppState> {
                             }}>restore</p>
                             <p>)</p>
                         </>)}
-
-
                     </div>
-
-
                 }
-
 
                 {ticketsToDisplay ? this.renderTickets(ticketsToDisplay) : <h2>Loading..</h2>}
             </div>
 
             <ScrollUpButton/>
 
+            {this.renderNextPreviousButtons()}
 
         </main>)
     }
 }
-
-// type Student={
-// 	name:string,
-// 	age:number
-// }
-// const s:Student={
-// 	name:'sdgdsf',
-// 	age:'sdg'
-// }
-
 
 export default App;
